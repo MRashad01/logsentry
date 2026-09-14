@@ -5,6 +5,7 @@ from __future__ import annotations
 import argparse
 import json
 import sys
+from datetime import datetime
 from pathlib import Path
 
 from logsentry import __version__
@@ -12,6 +13,27 @@ from logsentry.detect import Finding, analyze
 from logsentry.parsers import parse_auth_log, parse_web_log
 
 _SEV_ICON = {"high": "[HIGH]  ", "medium": "[MEDIUM]", "low": "[LOW]   "}
+
+
+def parse_timestamp(value: str) -> datetime:
+    """Parse a datetime string in ISO format or common date/time formats."""
+    for fmt in (
+        "%Y-%m-%d %H:%M:%S",
+        "%Y-%m-%d %H:%M",
+        "%Y-%m-%d",
+        "%Y-%m-%dT%H:%M:%S",
+        "%Y-%m-%dT%H:%M",
+    ):
+        try:
+            return datetime.strptime(value.strip(), fmt)
+        except ValueError:
+            pass
+    try:
+        return datetime.fromisoformat(value.strip())
+    except ValueError as exc:
+        raise argparse.ArgumentTypeError(
+            f"Invalid timestamp format: {value!r}. Expected YYYY-MM-DD [HH:MM[:SS]]"
+        ) from exc
 
 
 def build_parser() -> argparse.ArgumentParser:
@@ -22,6 +44,10 @@ def build_parser() -> argparse.ArgumentParser:
     )
     p.add_argument("--auth", type=Path, help="path to an sshd auth log (auth.log / secure)")
     p.add_argument("--web", type=Path, help="path to a Combined Log Format access log")
+    p.add_argument("--since", type=parse_timestamp,
+                   help="filter events on or after timestamp (e.g. '2026-01-12 00:00')")
+    p.add_argument("--until", type=parse_timestamp,
+                   help="filter events on or before timestamp (e.g. '2026-01-13 00:00')")
     p.add_argument("--json", action="store_true", help="emit JSON instead of text")
     p.add_argument("--evidence", action="store_true",
                    help="include raw evidence lines in text output")
@@ -46,6 +72,10 @@ def main(argv: list[str] | None = None) -> int:
         print("error: provide --auth and/or --web log file", file=sys.stderr)
         return 2
 
+    if args.since and args.until and args.since > args.until:
+        print("error: --since must be before or equal to --until", file=sys.stderr)
+        return 2
+
     auth_events = web_events = None
     try:
         if args.auth:
@@ -57,6 +87,19 @@ def main(argv: list[str] | None = None) -> int:
     except OSError as e:
         print(f"error: {e}", file=sys.stderr)
         return 1
+
+    if auth_events is not None and (args.since or args.until):
+        auth_events = [
+            e for e in auth_events
+            if (args.since is None or e.timestamp >= args.since)
+            and (args.until is None or e.timestamp <= args.until)
+        ]
+    if web_events is not None and (args.since or args.until):
+        web_events = [
+            e for e in web_events
+            if (args.since is None or e.timestamp >= args.since)
+            and (args.until is None or e.timestamp <= args.until)
+        ]
 
     findings = analyze(auth_events, web_events)
     if args.json:

@@ -41,6 +41,9 @@ logsentry --auth auth.log --json
 
 # Show the raw log lines behind each finding
 logsentry --web access.log --evidence
+
+# Filter events to a specific time range
+logsentry --auth auth.log --since '2026-01-12 00:00' --until '2026-01-13 00:00'
 ```
 
 Try it immediately on the bundled sample logs:
