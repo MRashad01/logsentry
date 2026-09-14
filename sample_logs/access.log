@@ -1,0 +1,8 @@
+203.0.113.50 - - [12/Jan/2026:10:02:01 +0000] "GET /.env HTTP/1.1" 404 153 "-" "Mozilla/5.0 zgrab/0.x"
+203.0.113.50 - - [12/Jan/2026:10:02:02 +0000] "GET /wp-login.php HTTP/1.1" 404 153 "-" "Mozilla/5.0 zgrab/0.x"
+203.0.113.50 - - [12/Jan/2026:10:02:03 +0000] "GET /.git/config HTTP/1.1" 404 153 "-" "Mozilla/5.0 zgrab/0.x"
+203.0.113.50 - - [12/Jan/2026:10:02:04 +0000] "GET /phpmyadmin/index.php HTTP/1.1" 404 153 "-" "Mozilla/5.0 zgrab/0.x"
+198.51.100.14 - - [12/Jan/2026:11:15:20 +0000] "GET /index.html HTTP/1.1" 200 5120 "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64)"
+198.51.100.14 - - [12/Jan/2026:11:15:21 +0000] "GET /style.css HTTP/1.1" 200 1024 "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64)"
+203.0.113.77 - - [12/Jan/2026:12:00:01 +0000] "GET /page?id=1 HTTP/1.1" 200 2048 "-" "sqlmap/1.7.2#stable (https://sqlmap.org)"
+203.0.113.77 - - [12/Jan/2026:12:00:02 +0000] "GET /page?id=1%27 HTTP/1.1" 500 512 "-" "sqlmap/1.7.2#stable (https://sqlmap.org)"
