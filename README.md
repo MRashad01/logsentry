@@ -1,5 +1,9 @@
 # logsentry
 
+[![CI](https://github.com/MRashad01/logsentry/actions/workflows/ci.yml/badge.svg)](https://github.com/MRashad01/logsentry/actions/workflows/ci.yml)
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
+![Python 3.10+](https://img.shields.io/badge/python-3.10%2B-blue)
+
 Blue-team log analysis engine: parses SSH auth logs and web access logs, then runs detection rules to surface attack patterns — pure Python, zero dependencies.
 
 Built to answer the first questions of incident triage fast: *who is attacking, how, and did they get in?*
